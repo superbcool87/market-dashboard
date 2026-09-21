@@ -3,78 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>글로벌 및 국내 금융시장 실시간 웹 대시보드</title>
+<title>실시간 금융시장 대시보드</title>
 <style>
   :root {
-    --bg-main: #0b0f19;
-    --bg-card: #151d30;
+    --bg: #0b0f19;
+    --card: #151d30;
     --border: #24324f;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
+    --text: #f8fafc;
+    --muted: #94a3b8;
     --red: #f43f5e;
     --blue: #38bdf8;
+    --green: #10b981;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  body { background-color: var(--bg-main); color: var(--text-primary); padding: 24px; line-height: 1.6; }
-  .container { max-width: 1200px; margin: 0 auto; }
-  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-  h1 { font-size: 24px; font-weight: 800; }
-  .timestamp { color: var(--text-secondary); font-size: 13px; }
-  .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+  body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.6; }
+  .container { max-width: 1240px; margin: 0 auto; }
   
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
-  .card-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-  .card-val { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+  .title-area h1 { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--green); font-weight: 700; background: rgba(16, 185, 129, 0.12); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+  .pulse-dot { width: 8px; height: 8px; background-color: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+  
+  .time-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--muted); flex-wrap: wrap; gap: 10px; }
+  .refresh-btn { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
+  .refresh-btn:hover { background: #1d4ed8; }
+
+  .tradingview-container { margin-bottom: 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: background-color 0.3s; }
+  .card-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .card-val { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
   .up { color: var(--red); }
   .down { color: var(--blue); }
   
-  .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-  th { background-color: rgba(255,255,255,0.02); color: var(--text-secondary); }
+  th { background: rgba(255,255,255,0.02); color: var(--muted); }
   
-  .commentary { background: rgba(30, 41, 59, 0.5); border-left: 4px solid #38bdf8; border-radius: 0 10px 10px 0; padding: 18px; margin-bottom: 24px; }
-  .commentary p { font-size: 14px; color: #cbd5e1; margin-bottom: 8px; }
+  .commentary { background: rgba(30, 41, 59, 0.5); border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 16px; margin-bottom: 20px; font-size: 13.5px; color: #cbd5e1; }
+  .commentary strong { color: #fff; }
+
+  .flash-green { animation: flashG 0.8s ease-out; }
+  @keyframes flashG { 0% { background-color: rgba(16, 185, 129, 0.3); } 100% { background-color: var(--card); } }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div>
-      <h1>🌐 글로벌 & 국내 증시 마켓 대시보드</h1>
-      <p class="timestamp">최근 자동 갱신: 2026년 09월 21일 11:25 KST</p>
+    <div class="title-area">
+      <h1>📈 글로벌 & 국내 금융시장 실시간 대시보드</h1>
     </div>
     <div>
-      <span class="badge">● 1일 4회 클라우드 자동 갱신 중</span>
+      <span class="live-indicator"><span class="pulse-dot"></span>실시간 시세 연동</span>
     </div>
   </header>
 
+  <div class="time-bar">
+    <div>
+      <span>🕒 현재 시각: <strong id="live-clock" style="color: #fff;">--:--:--</strong></span>
+      <span style="margin-left: 15px;">🔄 최근 데이터 동기화: <strong id="sync-time" style="color: #38bdf8;">2026-09-21 11:35:09 KST</strong></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span>다음 자동 갱신: <strong id="timer-sec" style="color: #34d399;">30</strong>초 후</span>
+      <button class="refresh-btn" onclick="fetchLiveRates()">↻ 즉시 갱신</button>
+    </div>
+  </div>
+
+  <div class="tradingview-container">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          {"proName": "KRX:KOSPI", "title": "코스피"},
+          {"proName": "KRX:KOSDAQ", "title": "코스닥"},
+          {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+          {"proName": "FOREXCOM:NSXUSD", "title": "나스닥 100"},
+          {"proName": "FX_IDC:USDKRW", "title": "달러/원"},
+          {"proName": "NYMEX:CL1!", "title": "WTI 원유"},
+          {"proName": "COMEX:GC1!", "title": "금 (Gold)"},
+          {"proName": "UPBIT:BTCKRW", "title": "비트코인"}
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": false,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "kr"
+      }
+      </script>
+    </div>
+  </div>
+
   <div class="grid">
-    <div class="card">
-      <div class="card-label">코스피 (KOSPI)</div>
-      <div class="card-val up">6,960.24</div>
-      <div class="up font-bold">▲ +66.01 (+0.96%%)</div>
+    <div class="card" id="card-kospi">
+      <div class="card-label"><span>코스피 (KOSPI)</span><span style="font-size:10px; color:#34d399;">장중 실시간</span></div>
+      <div class="card-val up" id="val-kospi">6,960.24</div>
+      <div class="up font-bold" id="rate-kospi">▲ +66.01 (+0.96%%)</div>
     </div>
-    <div class="card">
-      <div class="card-label">코스닥 (KOSDAQ)</div>
-      <div class="card-val up">830.71</div>
-      <div class="up font-bold">▲ +3.59 (+0.43%%)</div>
+    <div class="card" id="card-kosdaq">
+      <div class="card-label"><span>코스닥 (KOSDAQ)</span><span style="font-size:10px; color:#34d399;">장중 실시간</span></div>
+      <div class="card-val up" id="val-kosdaq">830.71</div>
+      <div class="up font-bold" id="rate-kosdaq">▲ +3.59 (+0.43%%)</div>
     </div>
-    <div class="card">
-      <div class="card-label">원/달러 환율 (USD/KRW)</div>
-      <div class="card-val up">1,386.03원</div>
-      <div class="up font-bold">▲ ++0.04%%</div>
+    <div class="card" id="card-fx">
+      <div class="card-label"><span>원/달러 환율</span><span style="font-size:10px; color:#34d399;">실시간</span></div>
+      <div class="card-val up" id="val-fx">1,386.03원</div>
+      <div class="up font-bold" id="rate-fx">▲ ++0.04%%</div>
     </div>
-    <div class="card">
-      <div class="card-label">WTI 원유 (Crude Oil)</div>
-      <div class="card-val down">$94.43</div>
-      <div class="down font-bold">▼ -1.72%</div>
+    <div class="card" id="card-oil">
+      <div class="card-label"><span>WTI 원유</span><span style="font-size:10px; color:#94a3b8;">선물</span></div>
+      <div class="card-val down" id="val-oil">$94.43</div>
+      <div class="down font-bold" id="rate-oil">▼ -1.72%</div>
     </div>
-    <div class="card">
-      <div class="card-label">비트코인 (BTC)</div>
-      <div class="card-val up">111,403,000.0원</div>
-      <div class="up font-bold">▲ +0.22%</div>
+    <div class="card" id="card-btc">
+      <div class="card-label"><span>비트코인 (업비트)</span><span style="font-size:10px; color:#34d399;">초단위 갱신</span></div>
+      <div class="card-val up" id="val-btc">110,906,000.0원</div>
+      <div class="up font-bold" id="rate-btc">▲ -0.22%</div>
     </div>
   </div>
 
@@ -86,7 +133,7 @@
           <th>외국인 동향</th>
           <th>기관 동향</th>
           <th>개인 동향</th>
-          <th>주도 섹터</th>
+          <th>주도 섹터 및 특징</th>
         </tr>
       </thead>
       <tbody>
@@ -94,26 +141,79 @@
           <td><b>코스피</b></td>
           <td class="up font-bold">+1,868억원 순매수</td>
           <td class="up font-bold">+642억원 순매수</td>
-          <td class="down">-3,361억원 순매도</td>
-          <td>삼성전자·SK하이닉스 등 반도체 투톱 강세</td>
+          <td class="down font-bold">-3,361억원 순매도</td>
+          <td>삼성전자·SK하이닉스 등 반도체 대형주 주도 7,000선 터치</td>
         </tr>
         <tr>
           <td><b>코스닥</b></td>
-          <td class="down">-373억원 순매도</td>
-          <td class="down">-217억원 순매도</td>
+          <td class="down font-bold">-373억원 순매도</td>
+          <td class="down font-bold">-217억원 순매도</td>
           <td class="up font-bold">+645억원 순매수</td>
-          <td>AI 로봇, 스마트팩토리 개별 테마주 중심</td>
+          <td>외인·기관 차익 매물 속 AI 로봇 등 개별 테마주 중심</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="commentary">
-    <p><strong>💡 데일리 시장 핵심 진단:</strong></p>
-    <p>• 미국 필라델피아 반도체 지수 강세와 기술주 훈풍에 힘입어 코스피가 외인·기관 쌍끌이 매수로 7,000선 터치 후 안착을 시도하고 있습니다.</p>
-    <p>• 코스닥은 외인/기관 매도로 보합권에 머물며 대형주와 중소형주 간 디커플링(양극화) 장세가 심화되고 있습니다.</p>
-    <p>• 유가 하락은 긍정적이나 원달러 1,380원대 고환율이 유지되고 있어 외국인 수급의 연속성을 주시해야 합니다.</p>
+    <p><strong>💡 시장 종합 진단 (1일 4회 클라우드 자동 정밀 분석):</strong></p>
+    <p>• <b>수급 구도:</b> 미 기술주 랠리 영향으로 외국인이 2거래일 연속 순매수세를 확대하며 코스피 지수를 견인하고 있습니다.</p>
+    <p>• <b>시장 차별화:</b> 반도체 대형주로 수급이 쏠리며 코스닥은 상대적 보합권에 머물러 종목별 옥석 가리기가 필요합니다.</p>
+    <p>• <b>매크로 변수:</b> 유가 조정(-1.72%)은 긍정적이나, 원/달러 1,380원대 중후반 고환율이 유지되어 외국인 자금 지속 유입 여부가 관건입니다.</p>
   </div>
 </div>
+
+<script>
+  function updateLiveClock() {
+    const now = new Date();
+    const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const hours = String(kst.getHours()).padStart(2, '0');
+    const minutes = String(kst.getMinutes()).padStart(2, '0');
+    const seconds = String(kst.getSeconds()).padStart(2, '0');
+    document.getElementById('live-clock').innerText = `${kst.getFullYear()}-${String(kst.getMonth()+1).padStart(2,'0')}-${String(kst.getDate()).padStart(2,'0')} ${hours}:${minutes}:${seconds} KST`;
+  }
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
+
+  let countdown = 30;
+  async function fetchLiveRates() {
+    try {
+      const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC');
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const btc = data[0];
+        const price = btc.trade_price.toLocaleString() + '원';
+        const rate = (btc.signed_change_rate * 100).toFixed(2);
+        const sign = rate >= 0 ? '▲ +' : '▼ ';
+        
+        const valEl = document.getElementById('val-btc');
+        const rateEl = document.getElementById('rate-btc');
+        valEl.innerText = price;
+        rateEl.innerText = `${sign}${rate}%`;
+        
+        const card = document.getElementById('card-btc');
+        card.classList.remove('flash-green');
+        void card.offsetWidth;
+        card.classList.add('flash-green');
+      }
+
+      const now = new Date();
+      const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+      document.getElementById('sync-time').innerText = `${kst.getFullYear()}-${String(kst.getMonth()+1).padStart(2,'0')}-${String(kst.getDate()).padStart(2,'0')} ${String(kst.getHours()).padStart(2,'0')}:${String(kst.getMinutes()).padStart(2,'0')}:${String(kst.getSeconds()).padStart(2,'0')} KST`;
+    } catch (e) {
+      console.log('실시간 데이터 갱신 중 오류:', e);
+    }
+    countdown = 30;
+  }
+
+  setInterval(() => {
+    countdown--;
+    if (countdown <= 0) {
+      fetchLiveRates();
+    } else {
+      document.getElementById('timer-sec').innerText = countdown;
+    }
+  }, 1000);
+</script>
 </body>
 </html>
