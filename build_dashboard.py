@@ -116,12 +116,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     --red: #f43f5e;
     --blue: #38bdf8;
     --green: #10b981;
+    --yellow: #f59e0b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; }
   body { background-color: var(--bg-main); color: var(--text-primary); padding: 24px; line-height: 1.6; }
   .container { max-width: 1280px; margin: 0 auto; }
-  
-  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
   .header-left h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff; display: flex; align-items: center; gap: 10px; }
   .header-left p { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
   .header-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -131,6 +131,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
   .badge-schedule { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
 
+  /* Schedule Banner */
   .schedule-banner { background: linear-gradient(90deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8)); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   .schedule-banner h4 { font-size: 14px; font-weight: 700; color: #38bdf8; }
   .schedule-steps { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
@@ -138,6 +139,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .step-dot { width: 8px; height: 8px; border-radius: 50%; background-color: #38bdf8; }
   .step-active { color: #f8fafc; font-weight: 700; }
 
+  /* Cards Grid */
   .grid-5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: transform 0.2s, background-color 0.2s; position: relative; }
   .card:hover { transform: translateY(-2px); background-color: var(--bg-card-hover); }
@@ -153,11 +155,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .down { color: var(--blue); }
   .neutral { color: var(--text-secondary); }
 
-  .section-header { font-size: 17px; font-weight: 700; margin: 28px 0 14px 0; display: flex; align-items: center; gap: 8px; color: #f8fafc; }
+  /* Layout Sections */
+  .section-header { font-size: 17px; font-weight: 700; margin: 28px 0 14px 0; display: flex; align-items: center; justify-content: space-between; color: #f8fafc; flex-wrap: wrap; gap: 10px; }
   .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; margin-bottom: 24px; }
   .chart-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
   .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
+  /* Tables */
   .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -168,6 +172,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .badge-buy { background: rgba(244, 63, 94, 0.15); color: #fb7185; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 11px; }
   .badge-sell { background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 11px; }
 
+  /* News Grid */
   .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .news-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
   .news-card h4 { font-size: 14px; font-weight: 700; line-height: 1.5; margin-bottom: 8px; }
@@ -176,10 +181,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .news-desc { font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 10px; }
   .news-footer { font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; }
 
+  /* Analysis */
   .commentary-card { background: rgba(30, 41, 59, 0.5); border-left: 4px solid #38bdf8; border-radius: 0 10px 10px 0; padding: 18px; margin-bottom: 24px; }
   .commentary-card p { font-size: 13.5px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.6; }
   .commentary-card p:last-child { margin-bottom: 0; }
   .commentary-card strong { color: #f8fafc; }
+
+  /* Watchlist Controls */
+  .watchlist-controls { display: flex; gap: 8px; align-items: center; }
+  .watchlist-input { background: #1e293b; border: 1px solid var(--border); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; width: 180px; }
+  .watchlist-btn { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .watchlist-btn:hover { background: #1d4ed8; }
+  .del-btn { background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 12px; padding: 0 4px; }
+  .del-btn:hover { color: #f43f5e; }
 
   footer { text-align: center; font-size: 12px; color: var(--text-secondary); border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; }
 </style>
@@ -212,7 +226,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <!-- Key Metrics Row 1: Equities -->
-  <div class="section-header">📈 국내 및 주요 해외 증시 지수</div>
+  <div class="section-header">
+    <span>📈 국내 및 주요 해외 증시 지수</span>
+  </div>
   <div class="grid-5">
     <div class="card" id="card-kospi">
       <div class="card-header-row">
@@ -262,7 +278,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <!-- Key Metrics Row 2: FX, Commodities & Crypto -->
-  <div class="section-header">🛢️ 환율, 원자재 및 주요 가상자산</div>
+  <div class="section-header">
+    <span>🛢️ 환율, 원자재 및 주요 가상자산</span>
+  </div>
   <div class="grid-5">
     <div class="card" id="card-fx">
       <div class="card-header-row">
@@ -311,10 +329,61 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
   </div>
 
+  <!-- ⭐ 관심 및 보유 종목 실시간 워치리스트 -->
+  <div class="section-header">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span>⭐ 관심 및 보유 종목</span>
+      <span style="font-size: 11px; color: var(--text-secondary); font-weight: normal;">(브라우저 저장 / 종목 자유 추가)</span>
+    </div>
+    <div class="watchlist-controls">
+      <input type="text" id="custom-stock-code" class="watchlist-input" placeholder="종목코드 6자리 (예: 005930)">
+      <button class="watchlist-btn" onclick="addCustomStock()">+ 종목 추가</button>
+    </div>
+  </div>
+  <div class="grid-5" id="watchlist-container">
+    <div class="card" id="stock-005930">
+      <div class="card-header-row">
+        <span class="card-label">삼성전자 (005930)</span>
+        <span class="card-time">{{CARD_TIME}} 갱신</span>
+      </div>
+      <div class="card-val up">269,500원</div>
+      <div class="card-chg up">▲ +8,000 (+3.06%)</div>
+      <div class="card-desc">외국인 대량 순매수 유입</div>
+    </div>
+    <div class="card" id="stock-000660">
+      <div class="card-header-row">
+        <span class="card-label">SK하이닉스 (000660)</span>
+        <span class="card-time">{{CARD_TIME}} 갱신</span>
+      </div>
+      <div class="card-val up">318,500원</div>
+      <div class="card-chg up">▲ +4,500 (+1.43%)</div>
+      <div class="card-desc">HBM 공급 및 마이크론 호실적</div>
+    </div>
+    <div class="card" id="stock-005380">
+      <div class="card-header-row">
+        <span class="card-label">현대차 (005380)</span>
+        <span class="card-time">{{CARD_TIME}} 갱신</span>
+      </div>
+      <div class="card-val down">248,000원</div>
+      <div class="card-chg down">▼ -1,500 (-0.60%)</div>
+      <div class="card-desc">환율 수혜 속 숨고르기</div>
+    </div>
+    <div class="card" id="stock-035420">
+      <div class="card-header-row">
+        <span class="card-label">NAVER (035420)</span>
+        <span class="card-time">{{CARD_TIME}} 갱신</span>
+      </div>
+      <div class="card-val up">198,200원</div>
+      <div class="card-chg up">▲ +1,800 (+0.92%)</div>
+      <div class="card-desc">AI 검색 및 커머스 모멘텀</div>
+    </div>
+  </div>
+
   <!-- SVG Visualizations -->
-  <div class="section-header">📊 시장 시각화 분석</div>
+  <div class="section-header">
+    <span>📊 시장 시각화 분석</span>
+  </div>
   <div class="charts-grid">
-    <!-- Chart 1: Intraday KOSPI -->
     <div class="chart-box">
       <div class="chart-title">
         <span>코스피 장중 7,000선 돌파 추이</span>
@@ -344,7 +413,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       </div>
     </div>
 
-    <!-- Chart 2: Investor Breakdown -->
     <div class="chart-box">
       <div class="chart-title">
         <span>국내 증시 투자자별 순매수/순매도 (억원)</span>
@@ -370,7 +438,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <!-- Detailed Table: Domestic -->
-  <div class="section-header">📋 국내 시장 수급 및 세부 현황</div>
+  <div class="section-header">
+    <span>📋 국내 시장 수급 및 세부 현황</span>
+  </div>
   <div class="table-card">
     <table>
       <thead>
@@ -411,7 +481,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <!-- News Section -->
-  <div class="section-header">📰 시장 핵심 헤드라인 스크랩</div>
+  <div class="section-header">
+    <span>📰 시장 핵심 헤드라인 스크랩</span>
+  </div>
   <div class="news-grid">
     <div class="news-card">
       <h4><a href="https://www.yna.co.kr/view/AKR20260921033051008" target="_blank">[연합뉴스] 코스피, 장초반 1% 내외 상승…장중 '7천피' 일시 회복</a></h4>
@@ -440,14 +512,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <!-- Macro Analysis -->
-  <div class="section-header">💡 시장 및 매크로 종합 분석 코멘트</div>
+  <div class="section-header">
+    <span>💡 시장 및 매크로 종합 분석 코멘트</span>
+  </div>
   <div class="commentary-card">
     <p><strong>1. 반도체 주도의 지수 견인과 수급 특징:</strong><br>
     미국 나스닥(+0.39%) 및 필라델피아 반도체 지수(+2.78%) 급등에 힘입어 코스피가 7,000선 돌파를 시도하고 있습니다. 특히 외국인이 지난 18일 8거래일 만에 순매수 전환한 데 이어 오늘 장 초반 1,800억원 이상의 매수 우위를 기록하며 지수 상승을 주도하고 있습니다.</p>
-    
     <p><strong>2. 코스피와 코스닥의 뚜렷한 디커플링(양극화):</strong><br>
     외국인과 기관의 자금이 대형 반도체주로 집중되면서 코스피는 1% 가까운 상승세를 보이는 반면, 코스닥은 외국인·기관의 동반 순매도로 인해 보합권에 머물고 있습니다. 지수 전반의 온기보다는 실적 및 주도주 중심의 압축 대응이 필요한 국면입니다.</p>
-
     <p><strong>3. 외환 및 원자재 시장 시사점:</strong><br>
     WTI 유가가 배럴당 $94.43(-1.72%)로 하락해 물가 불안이 완화된 점은 긍정적이나, 원/달러 환율이 1,386원선에서 고착화되어 있습니다. 고환율은 수출주 실적에는 우호적이나 외국인 환차손 우려가 공존하므로 오후장 수급 이탈 여부를 주시해야 합니다.</p>
   </div>
@@ -458,6 +530,79 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </div>
 
 <script>
+  function getSavedStocks() {
+    try {
+      return JSON.parse(localStorage.getItem('my_stocks')) || [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveStock(code, name, price, change, rate) {
+    let stocks = getSavedStocks();
+    if (!stocks.some(s => s.code === code)) {
+      stocks.push({code, name, price, change, rate});
+      localStorage.setItem('my_stocks', JSON.stringify(stocks));
+      renderWatchlist();
+    }
+  }
+
+  function removeStock(code) {
+    let stocks = getSavedStocks().filter(s => s.code !== code);
+    localStorage.setItem('my_stocks', JSON.stringify(stocks));
+    renderWatchlist();
+  }
+
+  async function addCustomStock() {
+    const input = document.getElementById('custom-stock-code');
+    const code = input.value.trim();
+    if (!code) return;
+    
+    try {
+      const res = await fetch(`https://m.stock.naver.com/api/stock/${code}/basic`);
+      const data = await res.json();
+      if (data && data.stockName) {
+        saveStock(code, data.stockName, data.nowValue + '원', (data.changeVal >= 0 ? '▲ +' : '▼ ') + data.changeVal, data.fluctuationsRatio + '%');
+        input.value = '';
+      } else {
+        alert('종목 정보를 찾을 수 없습니다. 종목코드 6자리를 확인해주세요.');
+      }
+    } catch(e) {
+      saveStock(code, `종목 ${code}`, '조회 중...', '-', '-');
+      input.value = '';
+    }
+  }
+
+  function renderWatchlist() {
+    const container = document.getElementById('watchlist-container');
+    const customStocks = getSavedStocks();
+    const customElements = document.querySelectorAll('.custom-stock-card');
+    customElements.forEach(el => el.remove());
+
+    const now = new Date();
+    const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const timeStr = `${String(kst.getMonth()+1).padStart(2,'0')}.${String(kst.getDate()).padStart(2,'0')} ${String(kst.getHours()).padStart(2,'0')}:${String(kst.getMinutes()).padStart(2,'0')} 갱신`;
+
+    customStocks.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'card custom-stock-card';
+      card.id = `stock-${s.code}`;
+      card.innerHTML = `
+        <div class="card-header-row">
+          <span class="card-label">${s.name} (${s.code})</span>
+          <div>
+            <span class="card-time">${timeStr}</span>
+            <button class="del-btn" onclick="removeStock('${s.code}')" title="삭제">×</button>
+          </div>
+        </div>
+        <div class="card-val up">${s.price}</div>
+        <div class="card-chg up">${s.change} (${s.rate})</div>
+        <div class="card-desc">사용자 등록 관심종목</div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
   async function refreshLiveCards() {
     try {
       const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH');
@@ -489,7 +634,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       console.log('실시간 데이터 갱신:', e);
     }
   }
-  setInterval(refreshLiveCards, 30000);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderWatchlist();
+    setInterval(refreshLiveCards, 30000);
+  });
 </script>
 </body>
 </html>"""
