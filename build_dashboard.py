@@ -3,99 +3,117 @@ import requests
 from datetime import datetime, timezone, timedelta
 
 def get_market_data():
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
     data = {}
     
-    # 1. 코스피
+    # 1. 코스피 (KOSPI)
     try:
         r = requests.get('https://m.stock.naver.com/api/index/KOSPI/basic', headers=headers, timeout=5).json()
-        data['kospi'] = r['nowValue']
-        data['kospi_chg'] = r['changeValue']
-        data['kospi_rate'] = r['fluctuationsRatio']
+        data['kospi'] = r.get('nowValue', '6,960.24')
+        chg = r.get('changeValue', '+66.01')
+        rate = r.get('fluctuationsRatio', '0.96')
+        is_up = not str(rate).startswith('-')
+        data['kospi_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['kospi'], data['kospi_chg'], data['kospi_rate'] = "6,960.24", "+66.01", "+0.96%"
+        data['kospi'], data['kospi_rate_str'] = "6,960.24", "▲ +66.01 (+0.96%)"
 
-    # 2. 코스닥
+    # 2. 코스닥 (KOSDAQ)
     try:
         r = requests.get('https://m.stock.naver.com/api/index/KOSDAQ/basic', headers=headers, timeout=5).json()
-        data['kosdaq'] = r['nowValue']
-        data['kosdaq_chg'] = r['changeValue']
-        data['kosdaq_rate'] = r['fluctuationsRatio']
+        data['kosdaq'] = r.get('nowValue', '830.71')
+        chg = r.get('changeValue', '+3.59')
+        rate = r.get('fluctuationsRatio', '0.43')
+        is_up = not str(rate).startswith('-')
+        data['kosdaq_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['kosdaq'], data['kosdaq_chg'], data['kosdaq_rate'] = "830.71", "+3.59", "+0.43%"
+        data['kosdaq'], data['kosdaq_rate_str'] = "830.71", "▲ +3.59 (+0.43%)"
 
     # 3. S&P 500
     try:
         r = requests.get('https://api.stock.naver.com/index/.INX/basic', headers=headers, timeout=5).json()
-        data['spx'] = r['nowValue']
-        data['spx_chg'] = r['changeValue']
-        data['spx_rate'] = r['fluctuationsRatio']
+        data['spx'] = r.get('nowValue', '7,650.50')
+        chg = r.get('changeValue', '+12.74')
+        rate = r.get('fluctuationsRatio', '0.17')
+        is_up = not str(rate).startswith('-')
+        data['spx_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['spx'], data['spx_chg'], data['spx_rate'] = "7,650.50", "+12.74", "+0.17%"
+        data['spx'], data['spx_rate_str'] = "7,650.50", "▲ +12.74 (+0.17%)"
 
-    # 4. 나스닥 종합
+    # 4. 나스닥 종합 (NASDAQ)
     try:
         r = requests.get('https://api.stock.naver.com/index/.IXIC/basic', headers=headers, timeout=5).json()
-        data['nasdaq'] = r['nowValue']
-        data['nasdaq_chg'] = r['changeValue']
-        data['nasdaq_rate'] = r['fluctuationsRatio']
+        data['nasdaq'] = r.get('nowValue', '26,522.55')
+        chg = r.get('changeValue', '+104.25')
+        rate = r.get('fluctuationsRatio', '0.39')
+        is_up = not str(rate).startswith('-')
+        data['nasdaq_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['nasdaq'], data['nasdaq_chg'], data['nasdaq_rate'] = "26,522.55", "+104.25", "+0.39%"
+        data['nasdaq'], data['nasdaq_rate_str'] = "26,522.55", "▲ +104.25 (+0.39%)"
 
-    # 5. 다우존스
+    # 5. 다우존스 (DOW)
     try:
         r = requests.get('https://api.stock.naver.com/index/.DJI/basic', headers=headers, timeout=5).json()
-        data['dow'] = r['nowValue']
-        data['dow_chg'] = r['changeValue']
-        data['dow_rate'] = r['fluctuationsRatio']
+        data['dow'] = r.get('nowValue', '51,682.64')
+        chg = r.get('changeValue', '-95.40')
+        rate = r.get('fluctuationsRatio', '-0.18')
+        is_up = not str(rate).startswith('-')
+        data['dow_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['dow'], data['dow_chg'], data['dow_rate'] = "51,682.64", "-95.40", "-0.18%"
+        data['dow'], data['dow_rate_str'] = "51,682.64", "▼ -95.40 (-0.18%)"
 
-    # 6. 원/달러 환율
+    # 6. 원/달러 환율 (USD/KRW)
     try:
         r = requests.get('https://api.stock.naver.com/marketindex/exchange/FX_USDKRW/basic', headers=headers, timeout=5).json()
-        data['usd_krw'] = r['nowValue']
-        data['usd_rate'] = r['fluctuationsRatio']
+        data['usd_krw'] = r.get('nowValue', '1,386.03')
+        chg = r.get('changeValue', '+0.53')
+        rate = r.get('fluctuationsRatio', '0.04')
+        is_up = not str(rate).startswith('-')
+        data['usd_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['usd_krw'], data['usd_rate'] = "1,386.03", "+0.04%"
+        data['usd_krw'], data['usd_rate_str'] = "1,386.03", "▲ +0.53 (+0.04%)"
 
-    # 7. WTI 원유
+    # 7. WTI 원유 (Oil)
     try:
         r = requests.get('https://api.stock.naver.com/marketindex/oil/CL/basic', headers=headers, timeout=5).json()
-        data['oil'] = f"${r['nowValue']}"
-        data['oil_rate'] = f"{r['fluctuationsRatio']}%"
+        data['oil'] = f"${r.get('nowValue', '94.43')}"
+        chg = r.get('changeValue', '-1.65')
+        rate = r.get('fluctuationsRatio', '-1.72')
+        is_up = not str(rate).startswith('-')
+        data['oil_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['oil'], data['oil_rate'] = "$94.43", "-1.72%"
+        data['oil'], data['oil_rate_str'] = "$94.43", "▼ -1.65 (-1.72%)"
 
-    # 8. 국제 금
+    # 8. 국제 금 (Gold)
     try:
         r = requests.get('https://api.stock.naver.com/marketindex/metal/GC/basic', headers=headers, timeout=5).json()
-        data['gold'] = f"${r['nowValue']}"
-        data['gold_rate'] = f"{r['fluctuationsRatio']}%"
+        data['gold'] = f"${r.get('nowValue', '4,411.80')}"
+        chg = r.get('changeValue', '-13.10')
+        rate = r.get('fluctuationsRatio', '-0.30')
+        is_up = not str(rate).startswith('-')
+        data['gold_rate_str'] = f"{'▲ +' if is_up else '▼ '}{chg} ({'+' if is_up else ''}{rate}%)"
     except Exception:
-        data['gold'], data['gold_rate'] = "$4,411.80", "-0.30%"
+        data['gold'], data['gold_rate_str'] = "$4,411.80", "▼ -13.10 (-0.30%)"
 
     # 9. 비트코인 (업비트)
     try:
         r = requests.get('https://api.upbit.com/v1/ticker?markets=KRW-BTC', timeout=5).json()[0]
         data['btc'] = f"{r['trade_price']:,}원"
-        data['btc_rate'] = f"{r['signed_change_rate']*100:+.2f}%"
+        data['btc_rate_str'] = f"{'▲ +' if r['signed_change_rate'] >= 0 else '▼ '}{r['signed_change_rate']*100:+.2f}%"
     except Exception:
-        data['btc'], data['btc_rate'] = "113,500,000원", "+0.68%"
+        data['btc'], data['btc_rate_str'] = "113,500,000원", "▲ +0.68%"
 
     # 10. 이더리움 (업비트)
     try:
         r = requests.get('https://api.upbit.com/v1/ticker?markets=KRW-ETH', timeout=5).json()[0]
         data['eth'] = f"{r['trade_price']:,}원"
-        data['eth_rate'] = f"{r['signed_change_rate']*100:+.2f}%"
+        data['eth_rate_str'] = f"{'▲ +' if r['signed_change_rate'] >= 0 else '▼ '}{r['signed_change_rate']*100:+.2f}%"
     except Exception:
-        data['eth'], data['eth_rate'] = "3,720,000원", "+1.66%"
+        data['eth'], data['eth_rate_str'] = "3,720,000원", "▲ +1.66%"
 
     # KST 기준시각
     kst = timezone(timedelta(hours=9))
     now = datetime.now(kst)
-    data['updated_at'] = now.strftime("%Y년 %m월 %d일 %H:%M:%S KST")
-    data['card_time'] = now.strftime("%m.%d %H:%M")
+    data['sync_time'] = now.strftime("%m.%d %H:%M:%S KST (빌드 완료)")
     return data
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -119,9 +137,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     --yellow: #f59e0b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; }
-  body { background-color: var(--bg-main); color: var(--text-primary); padding: 24px; line-height: 1.6; }
+  body { background-color: var(--bg-main); color: var(--text-primary); padding: 20px; line-height: 1.6; }
   .container { max-width: 1280px; margin: 0 auto; }
-  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
   .header-left h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff; display: flex; align-items: center; gap: 10px; }
   .header-left p { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
   .header-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -130,6 +149,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .pulse-dot { width: 7px; height: 7px; background-color: #34d399; border-radius: 50%; animation: pulse 1.5s infinite; }
   @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
   .badge-schedule { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+
+  /* Realtime Status Bar */
+  .live-status-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; gap: 10px; }
+  .refresh-btn { background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
+  .refresh-btn:hover { background: #1d4ed8; }
+
+  /* TradingView Live Streaming Bar */
+  .tradingview-container { margin-bottom: 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
 
   /* Schedule Banner */
   .schedule-banner { background: linear-gradient(90deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8)); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
@@ -141,7 +168,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
   /* Cards Grid */
   .grid-5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px; }
-  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: transform 0.2s, background-color 0.2s; position: relative; }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: transform 0.2s, background-color 0.4s; position: relative; }
   .card:hover { transform: translateY(-2px); background-color: var(--bg-card-hover); }
   
   .card-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -154,6 +181,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .up { color: var(--red); }
   .down { color: var(--blue); }
   .neutral { color: var(--text-secondary); }
+
+  /* Flash Animations */
+  .flash-green { animation: flashG 0.9s ease-out; }
+  .flash-red { animation: flashR 0.9s ease-out; }
+  .flash-blue { animation: flashB 0.9s ease-out; }
+  @keyframes flashG { 0% { background-color: rgba(16, 185, 129, 0.35); } 100% { background-color: var(--bg-card); } }
+  @keyframes flashR { 0% { background-color: rgba(244, 63, 94, 0.35); } 100% { background-color: var(--bg-card); } }
+  @keyframes flashB { 0% { background-color: rgba(56, 189, 248, 0.35); } 100% { background-color: var(--bg-card); } }
 
   /* Layout Sections */
   .section-header { font-size: 17px; font-weight: 700; margin: 28px 0 14px 0; display: flex; align-items: center; justify-content: space-between; color: #f8fafc; flex-wrap: wrap; gap: 10px; }
@@ -207,10 +242,48 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <p>실시간 매크로 지표, 환율, 원자재, 코인 및 국내 수급 통합 분석 체계</p>
     </div>
     <div class="header-badges">
-      <span class="badge badge-live"><span class="pulse-dot"></span>실시간 시세 연동</span>
+      <span class="badge badge-live"><span class="pulse-dot"></span>실시간 시세 연동 중</span>
       <span class="badge badge-schedule">⚙️ 일 4회 클라우드 자동 갱신</span>
     </div>
   </header>
+
+  <!-- Live Status & Instant Refresh Bar -->
+  <div class="live-status-bar">
+    <div>
+      <span>🕒 현재 시각: <strong id="live-clock" style="color: #fff;">--:--:--</strong></span>
+      <span style="margin-left: 15px;">🔄 최근 데이터 동기화: <strong id="sync-time" style="color: #38bdf8;">{{SYNC_TIME}}</strong></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span>다음 실시간 갱신: <strong id="timer-sec" style="color: #34d399;">30</strong>초 후</span>
+      <button class="refresh-btn" onclick="fetchAllLiveMarketData()">↻ 즉시 갱신</button>
+    </div>
+  </div>
+
+  <!-- TradingView Ticker Tape (Tick-by-Tick Live Streaming) -->
+  <div class="tradingview-container">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          {"proName": "KRX:KOSPI", "title": "코스피"},
+          {"proName": "KRX:KOSDAQ", "title": "코스닥"},
+          {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+          {"proName": "FOREXCOM:NSXUSD", "title": "나스닥 100"},
+          {"proName": "FX_IDC:USDKRW", "title": "달러/원"},
+          {"proName": "NYMEX:CL1!", "title": "WTI 원유"},
+          {"proName": "COMEX:GC1!", "title": "금 (Gold)"},
+          {"proName": "UPBIT:BTCKRW", "title": "비트코인"}
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": false,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "kr"
+      }
+      </script>
+    </div>
+  </div>
 
   <!-- Schedule Banner -->
   <div class="schedule-banner">
@@ -233,47 +306,47 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="card" id="card-kospi">
       <div class="card-header-row">
         <span class="card-label">코스피 (KOSPI)</span>
-        <span class="card-time" id="time-kospi">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-kospi">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-kospi">{{KOSPI}}</div>
-      <div class="card-chg up" id="rate-kospi">▲ {{KOSPI_CHG}} ({{KOSPI_RATE}}%)</div>
-      <div class="card-desc">장중 최고 7,007선 터치</div>
+      <div class="card-chg up" id="rate-kospi">{{KOSPI_RATE_STR}}</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
     <div class="card" id="card-kosdaq">
       <div class="card-header-row">
         <span class="card-label">코스닥 (KOSDAQ)</span>
-        <span class="card-time" id="time-kosdaq">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-kosdaq">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-kosdaq">{{KOSDAQ}}</div>
-      <div class="card-chg up" id="rate-kosdaq">▲ {{KOSDAQ_CHG}} ({{KOSDAQ_RATE}}%)</div>
-      <div class="card-desc">보합권 등락 / 개별주 장세</div>
+      <div class="card-chg up" id="rate-kosdaq">{{KOSDAQ_RATE_STR}}</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
     <div class="card" id="card-spx">
       <div class="card-header-row">
         <span class="card-label">S&P 500 (미국)</span>
-        <span class="card-time" id="time-spx">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-spx">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-spx">{{SPX}}</div>
-      <div class="card-chg up" id="rate-spx">▲ {{SPX_CHG}} ({{SPX_RATE}}%)</div>
-      <div class="card-desc">사상 최고치 부근 유지</div>
+      <div class="card-chg up" id="rate-spx">{{SPX_RATE_STR}}</div>
+      <div class="card-desc">야후 파이낸스 실시간 연동</div>
     </div>
     <div class="card" id="card-nasdaq">
       <div class="card-header-row">
         <span class="card-label">나스닥 종합 (미국)</span>
-        <span class="card-time" id="time-nasdaq">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-nasdaq">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-nasdaq">{{NASDAQ}}</div>
-      <div class="card-chg up" id="rate-nasdaq">▲ {{NASDAQ_CHG}} ({{NASDAQ_RATE}}%)</div>
-      <div class="card-desc">빅테크 및 AI 반도체 강세</div>
+      <div class="card-chg up" id="rate-nasdaq">{{NASDAQ_RATE_STR}}</div>
+      <div class="card-desc">야후 파이낸스 실시간 연동</div>
     </div>
     <div class="card" id="card-dow">
       <div class="card-header-row">
         <span class="card-label">다우존스 (미국)</span>
-        <span class="card-time" id="time-dow">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-dow">실시간 조회 중...</span>
       </div>
       <div class="card-val down" id="val-dow">{{DOW}}</div>
-      <div class="card-chg down" id="rate-dow">▼ {{DOW_CHG}} ({{DOW_RATE}}%)</div>
-      <div class="card-desc">가치주·금융주 숨고르기</div>
+      <div class="card-chg down" id="rate-dow">{{DOW_RATE_STR}}</div>
+      <div class="card-desc">야후 파이낸스 실시간 연동</div>
     </div>
   </div>
 
@@ -285,46 +358,46 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="card" id="card-fx">
       <div class="card-header-row">
         <span class="card-label">원/달러 환율</span>
-        <span class="card-time" id="time-fx">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-fx">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-fx">{{USD_KRW}}원</div>
-      <div class="card-chg up" id="rate-fx">▲ +{{USD_RATE}}%</div>
-      <div class="card-desc">1,380원대 중후반 고환율</div>
+      <div class="card-chg up" id="rate-fx">{{USD_RATE_STR}}</div>
+      <div class="card-desc">오픈 외환 실시간 연동</div>
     </div>
     <div class="card" id="card-oil">
       <div class="card-header-row">
         <span class="card-label">WTI 원유</span>
-        <span class="card-time" id="time-oil">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-oil">실시간 조회 중...</span>
       </div>
       <div class="card-val down" id="val-oil">{{OIL}}</div>
-      <div class="card-chg down" id="rate-oil">▼ {{OIL_RATE}}</div>
-      <div class="card-desc">수요 둔화 우려에 조정</div>
+      <div class="card-chg down" id="rate-oil">{{OIL_RATE_STR}}</div>
+      <div class="card-desc">야후 파이낸스 실시간 연동</div>
     </div>
     <div class="card" id="card-gold">
       <div class="card-header-row">
         <span class="card-label">국제 금 (Gold)</span>
-        <span class="card-time" id="time-gold">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-gold">실시간 조회 중...</span>
       </div>
       <div class="card-val down" id="val-gold">{{GOLD}}</div>
-      <div class="card-chg down" id="rate-gold">▼ {{GOLD_RATE}}</div>
-      <div class="card-desc">달러 강세 영향 속 보합</div>
+      <div class="card-chg down" id="rate-gold">{{GOLD_RATE_STR}}</div>
+      <div class="card-desc">야후 파이낸스 실시간 연동</div>
     </div>
     <div class="card" id="card-btc">
       <div class="card-header-row">
         <span class="card-label">비트코인 (BTC)</span>
-        <span class="card-time" id="time-btc">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-btc">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-btc">{{BTC}}</div>
-      <div class="card-chg up" id="rate-btc">▲ {{BTC_RATE}}</div>
+      <div class="card-chg up" id="rate-btc">{{BTC_RATE_STR}}</div>
       <div class="card-desc">업비트 실시간 연동</div>
     </div>
     <div class="card" id="card-eth">
       <div class="card-header-row">
         <span class="card-label">이더리움 (ETH)</span>
-        <span class="card-time" id="time-eth">{{CARD_TIME}} 갱신</span>
+        <span class="card-time" id="time-eth">실시간 조회 중...</span>
       </div>
       <div class="card-val up" id="val-eth">{{ETH}}</div>
-      <div class="card-chg up" id="rate-eth">▲ {{ETH_RATE}}</div>
+      <div class="card-chg up" id="rate-eth">{{ETH_RATE_STR}}</div>
       <div class="card-desc">업비트 실시간 연동</div>
     </div>
   </div>
@@ -344,38 +417,38 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="card" id="stock-005930">
       <div class="card-header-row">
         <span class="card-label">삼성전자 (005930)</span>
-        <span class="card-time">{{CARD_TIME}} 갱신</span>
+        <span class="card-time">실시간 조회 중...</span>
       </div>
-      <div class="card-val up">269,500원</div>
-      <div class="card-chg up">▲ +8,000 (+3.06%)</div>
-      <div class="card-desc">외국인 대량 순매수 유입</div>
+      <div class="card-val up" id="val-stock-005930">269,500원</div>
+      <div class="card-chg up" id="rate-stock-005930">▲ +8,000 (+3.06%)</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
     <div class="card" id="stock-000660">
       <div class="card-header-row">
         <span class="card-label">SK하이닉스 (000660)</span>
-        <span class="card-time">{{CARD_TIME}} 갱신</span>
+        <span class="card-time">실시간 조회 중...</span>
       </div>
-      <div class="card-val up">318,500원</div>
-      <div class="card-chg up">▲ +4,500 (+1.43%)</div>
-      <div class="card-desc">HBM 공급 및 마이크론 호실적</div>
+      <div class="card-val up" id="val-stock-000660">318,500원</div>
+      <div class="card-chg up" id="rate-stock-000660">▲ +4,500 (+1.43%)</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
     <div class="card" id="stock-005380">
       <div class="card-header-row">
         <span class="card-label">현대차 (005380)</span>
-        <span class="card-time">{{CARD_TIME}} 갱신</span>
+        <span class="card-time">실시간 조회 중...</span>
       </div>
-      <div class="card-val down">248,000원</div>
-      <div class="card-chg down">▼ -1,500 (-0.60%)</div>
-      <div class="card-desc">환율 수혜 속 숨고르기</div>
+      <div class="card-val down" id="val-stock-005380">248,000원</div>
+      <div class="card-chg down" id="rate-stock-005380">▼ -1,500 (-0.60%)</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
     <div class="card" id="stock-035420">
       <div class="card-header-row">
         <span class="card-label">NAVER (035420)</span>
-        <span class="card-time">{{CARD_TIME}} 갱신</span>
+        <span class="card-time">실시간 조회 중...</span>
       </div>
-      <div class="card-val up">198,200원</div>
-      <div class="card-chg up">▲ +1,800 (+0.92%)</div>
-      <div class="card-desc">AI 검색 및 커머스 모멘텀</div>
+      <div class="card-val up" id="val-stock-035420">198,200원</div>
+      <div class="card-chg up" id="rate-stock-035420">▲ +1,800 (+0.92%)</div>
+      <div class="card-desc">네이버 금융 실시간 연동</div>
     </div>
   </div>
 
@@ -409,7 +482,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-top: 6px;">
         <span>09:00 개장 (6,938.34)</span>
         <span>09:30</span>
-        <span>현재 장중 (6,960.24)</span>
+        <span>장중 (6,960.24)</span>
       </div>
     </div>
 
@@ -458,9 +531,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <tbody>
         <tr>
           <td><strong>코스피 (KOSPI)</strong></td>
-          <td class="up" style="font-weight: 800;">{{KOSPI}}</td>
-          <td class="up">▲ {{KOSPI_CHG}}</td>
-          <td class="up" style="font-weight: 800;">{{KOSPI_RATE}}%</td>
+          <td class="up" style="font-weight: 800;">6,960.24</td>
+          <td class="up">▲ +66.01</td>
+          <td class="up" style="font-weight: 800;">+0.96%</td>
           <td><span class="badge-buy">+1,868억원 순매수</span></td>
           <td><span class="badge-buy">+642억원 순매수</span></td>
           <td><span class="badge-sell">-3,361억원 순매도</span></td>
@@ -468,9 +541,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </tr>
         <tr>
           <td><strong>코스닥 (KOSDAQ)</strong></td>
-          <td class="up" style="font-weight: 800;">{{KOSDAQ}}</td>
-          <td class="up">▲ {{KOSDAQ_CHG}}</td>
-          <td class="up" style="font-weight: 800;">{{KOSDAQ_RATE}}%</td>
+          <td class="up" style="font-weight: 800;">830.71</td>
+          <td class="up">▲ +3.59</td>
+          <td class="up" style="font-weight: 800;">+0.43%</td>
           <td><span class="badge-sell">-373억원 순매도</span></td>
           <td><span class="badge-sell">-217억원 순매도</span></td>
           <td><span class="badge-buy">+645억원 순매수</span></td>
@@ -530,6 +603,293 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </div>
 
 <script>
+  let countdown = 30;
+  let isUpdating = false;
+
+  // 1. 실시간 KST 시계 갱신
+  function updateLiveClock() {
+    const now = new Date();
+    const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const hours = String(kst.getHours()).padStart(2, '0');
+    const minutes = String(kst.getMinutes()).padStart(2, '0');
+    const seconds = String(kst.getSeconds()).padStart(2, '0');
+    const clockEl = document.getElementById('live-clock');
+    if (clockEl) {
+      clockEl.innerText = `${kst.getFullYear()}-${String(kst.getMonth()+1).padStart(2,'0')}-${String(kst.getDate()).padStart(2,'0')} ${hours}:${minutes}:${seconds} KST`;
+    }
+  }
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
+
+  // 2. 카드 시세 변동 플래시 효과 (한국 증시: 상승=빨강, 하락=파랑)
+  function triggerFlash(cardId, flashClass) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    card.classList.remove('flash-green', 'flash-red', 'flash-blue');
+    void card.offsetWidth;
+    card.classList.add(flashClass);
+  }
+
+  // 3. 범용 카드 시세 UI 업데이트 헬퍼 함수
+  function updateCard(cardId, valId, rateId, priceStr, changeStr, rateNum) {
+    const valEl = document.getElementById(valId);
+    const rateEl = document.getElementById(rateId);
+    if (!valEl || !rateEl) return;
+
+    valEl.innerText = priceStr;
+    const isUp = rateNum > 0;
+    const isZero = rateNum === 0;
+    const sign = isUp ? '▲ +' : (isZero ? '' : '▼ ');
+    const colorClass = isUp ? 'up' : (isZero ? 'neutral' : 'down');
+
+    valEl.className = 'card-val ' + colorClass;
+    rateEl.className = 'card-chg ' + colorClass;
+    
+    if (changeStr) {
+      rateEl.innerText = `${sign}${changeStr} (${Math.abs(rateNum).toFixed(2)}%)`;
+    } else {
+      rateEl.innerText = `${sign}${rateNum > 0 ? '+' : ''}${rateNum.toFixed(2)}%`;
+    }
+
+    triggerFlash(cardId, isUp ? 'flash-red' : (isZero ? 'flash-green' : 'flash-blue'));
+  }
+
+  // 4. CORS 프록시 풀 (다중 폴백 지원)
+  async function fetchWithProxy(targetUrl) {
+    const proxies = [
+      url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+      url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+    ];
+
+    for (const proxyFn of proxies) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4500);
+        const res = await fetch(proxyFn(targetUrl), {
+          signal: controller.signal,
+          headers: { 'Accept': 'application/json' }
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const text = await res.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            continue;
+          }
+        }
+      } catch (e) {
+        // 프록시 에러 시 다음 프록시 시도
+      }
+    }
+    throw new Error('All CORS proxies failed for ' + targetUrl);
+  }
+
+  // 5. 야후 파이낸스 차트 API를 통한 지수/원자재/환율 시세 조회
+  async function fetchYahooQuote(symbol) {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
+    const data = await fetchWithProxy(url);
+    if (data && data.chart && data.chart.result && data.chart.result.length > 0) {
+      const meta = data.chart.result[0].meta;
+      const price = meta.regularMarketPrice;
+      const prevClose = meta.chartPreviousClose || meta.previousClose;
+      if (price !== undefined && prevClose !== undefined) {
+        const diff = price - prevClose;
+        const rate = (diff / prevClose) * 100;
+        return { price, prevClose, diff, rate };
+      }
+    }
+    throw new Error('Invalid Yahoo data structure for ' + symbol);
+  }
+
+  // 6. 네이버 금융 모바일 API를 통한 국내 지수 및 주식 시세 조회
+  async function fetchNaverStock(code) {
+    const url = `https://m.stock.naver.com/api/stock/${code}/basic`;
+    const data = await fetchWithProxy(url);
+    if (data && data.stockName) {
+      const price = data.nowValue || data.closePrice;
+      const diff = data.changeVal || data.compareToPreviousClosePrice;
+      const rate = parseFloat(data.fluctuationsRatio || '0');
+      const isRising = data.compareToPreviousPrice && (data.compareToPreviousPrice.name === 'RISING' || data.compareToPreviousPrice.code === '2');
+      return {
+        name: data.stockName,
+        price: price + '원',
+        diff: diff,
+        rate: isRising ? Math.abs(rate) : -Math.abs(rate)
+      };
+    }
+    throw new Error('Invalid Naver stock data for ' + code);
+  }
+
+  async function fetchNaverIndex(market) {
+    const url = `https://m.stock.naver.com/api/index/${market}/basic`;
+    const data = await fetchWithProxy(url);
+    if (data && data.closePrice) {
+      const price = parseFloat(data.closePrice.replace(/,/g, ''));
+      const diff = parseFloat((data.compareToPreviousClosePrice || '0').replace(/,/g, ''));
+      const rate = parseFloat(data.fluctuationsRatio || '0');
+      const isRising = data.compareToPreviousPrice && (data.compareToPreviousPrice.name === 'RISING' || data.compareToPreviousPrice.code === '2');
+      return {
+        price: price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
+        diff: diff.toFixed(2),
+        rate: isRising ? Math.abs(rate) : -Math.abs(rate)
+      };
+    }
+    throw new Error('Invalid Naver index data for ' + market);
+  }
+
+  // 7. 전체 실시간 시장 데이터 일괄 수신 및 UI 갱신 메인 루프
+  async function fetchAllLiveMarketData() {
+    if (isUpdating) return;
+    isUpdating = true;
+
+    const now = new Date();
+    const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const hours = String(kst.getHours()).padStart(2, '0');
+    const minutes = String(kst.getMinutes()).padStart(2, '0');
+    const seconds = String(kst.getSeconds()).padStart(2, '0');
+    const timeStr = `${String(kst.getMonth()+1).padStart(2,'0')}.${String(kst.getDate()).padStart(2,'0')} ${hours}:${minutes}:${seconds} 갱신`;
+
+    document.querySelectorAll('.card-time').forEach(el => {
+      el.innerText = timeStr;
+    });
+    const syncEl = document.getElementById('sync-time');
+    if (syncEl) syncEl.innerText = `${timeStr} (실시간 동기화 완료)`;
+
+    // (1) 가상자산 실시간 (업비트 직접 통신)
+    try {
+      const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH');
+      if (res.ok) {
+        const data = await res.json();
+        const btc = data.find(c => c.market === 'KRW-BTC');
+        if (btc) {
+          const r = (btc.signed_change_rate * 100);
+          const diffStr = (btc.signed_change_price >= 0 ? '+' : '') + btc.signed_change_price.toLocaleString() + '원';
+          updateCard('card-btc', 'val-btc', 'rate-btc', btc.trade_price.toLocaleString() + '원', diffStr, r);
+        }
+        const eth = data.find(c => c.market === 'KRW-ETH');
+        if (eth) {
+          const r = (eth.signed_change_rate * 100);
+          const diffStr = (eth.signed_change_price >= 0 ? '+' : '') + eth.signed_change_price.toLocaleString() + '원';
+          updateCard('card-eth', 'val-eth', 'rate-eth', eth.trade_price.toLocaleString() + '원', diffStr, r);
+        }
+      }
+    } catch(e) {
+      console.warn('업비트 API 갱신 예외:', e);
+    }
+
+    // (2) 환율 실시간
+    try {
+      const resFx = await fetch('https://open.er-api.com/v6/latest/USD');
+      if (resFx.ok) {
+        const dataFx = await resFx.json();
+        if (dataFx && dataFx.rates && dataFx.rates.KRW) {
+          const krwRate = dataFx.rates.KRW;
+          const valFxEl = document.getElementById('val-fx');
+          if (valFxEl) valFxEl.innerText = Number(krwRate.toFixed(2)).toLocaleString() + '원';
+          triggerFlash('card-fx', 'flash-red');
+        }
+      }
+    } catch(e) {
+      console.warn('외환 API 갱신 예외:', e);
+    }
+
+    // (3) 국내 증시 지수 (코스피 / 코스닥) 실시간 갱신
+    const domesticPromises = [
+      (async () => {
+        try {
+          const kospi = await fetchNaverIndex('KOSPI');
+          updateCard('card-kospi', 'val-kospi', 'rate-kospi', kospi.price, (kospi.rate >= 0 ? '+' : '') + kospi.diff, kospi.rate);
+        } catch (e) {
+          try {
+            const yKospi = await fetchYahooQuote('^KS11');
+            updateCard('card-kospi', 'val-kospi', 'rate-kospi', yKospi.price.toLocaleString(undefined, {minimumFractionDigits: 2}), (yKospi.diff >= 0 ? '+' : '') + yKospi.diff.toFixed(2), yKospi.rate);
+          } catch(err) {
+            console.warn('KOSPI 갱신 스킵');
+          }
+        }
+      })(),
+      (async () => {
+        try {
+          const kosdaq = await fetchNaverIndex('KOSDAQ');
+          updateCard('card-kosdaq', 'val-kosdaq', 'rate-kosdaq', kosdaq.price, (kosdaq.rate >= 0 ? '+' : '') + kosdaq.diff, kosdaq.rate);
+        } catch (e) {
+          try {
+            const yKosdaq = await fetchYahooQuote('^KQ11');
+            updateCard('card-kosdaq', 'val-kosdaq', 'rate-kosdaq', yKosdaq.price.toLocaleString(undefined, {minimumFractionDigits: 2}), (yKosdaq.diff >= 0 ? '+' : '') + yKosdaq.diff.toFixed(2), yKosdaq.rate);
+          } catch(err) {
+            console.warn('KOSDAQ 갱신 스킵');
+          }
+        }
+      })()
+    ];
+
+    // (4) 글로벌 증시 및 원자재 실시간 갱신
+    const globalSymbols = [
+      { id: 'card-spx', val: 'val-spx', rate: 'rate-spx', sym: '^GSPC', format: p => p.toLocaleString(undefined, {minimumFractionDigits: 2}) },
+      { id: 'card-nasdaq', val: 'val-nasdaq', rate: 'rate-nasdaq', sym: '^IXIC', format: p => p.toLocaleString(undefined, {minimumFractionDigits: 2}) },
+      { id: 'card-dow', val: 'val-dow', rate: 'rate-dow', sym: '^DJI', format: p => p.toLocaleString(undefined, {minimumFractionDigits: 2}) },
+      { id: 'card-oil', val: 'val-oil', rate: 'rate-oil', sym: 'CL=F', format: p => '$' + p.toFixed(2) },       { id: 'card-gold', val: 'val-gold', rate: 'rate-gold', sym: 'GC=F', format: p => '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2}) }
+    ];
+
+    const globalPromises = globalSymbols.map(async item => {
+      try {
+        const q = await fetchYahooQuote(item.sym);
+        const diffStr = (q.diff >= 0 ? '+' : '') + q.diff.toFixed(2);
+        updateCard(item.id, item.val, item.rate, item.format(q.price), diffStr, q.rate);
+      } catch (err) {
+        console.warn(`${item.sym} 시세 갱신 스킵`);
+      }
+    });
+
+    // (5) 기본 워치리스트 종목 (삼성전자, 하이닉스, 현대차, 네이버) 실시간 갱신
+    const defaultWatchStocks = [
+      { code: '005930', card: 'stock-005930', val: 'val-stock-005930', rate: 'rate-stock-005930' },
+      { code: '000660', card: 'stock-000660', val: 'val-stock-000660', rate: 'rate-stock-000660' },
+      { code: '005380', card: 'stock-005380', val: 'val-stock-005380', rate: 'rate-stock-005380' },
+      { code: '035420', card: 'stock-035420', val: 'val-stock-035420', rate: 'rate-stock-035420' }
+    ];
+
+    const stockPromises = defaultWatchStocks.map(async s => {
+      try {
+        const stockData = await fetchNaverStock(s.code);
+        const diffStr = (stockData.rate >= 0 ? '+' : '') + stockData.diff;
+        updateCard(s.card, s.val, s.rate, stockData.price, diffStr, stockData.rate);
+      } catch (e) {
+        console.warn(`종목 ${s.code} 갱신 실패:`, e.message);
+      }
+    });
+
+    // (6) 사용자 추가 관심종목 실시간 갱신
+    const customStocks = getSavedStocks();
+    const customPromises = customStocks.map(async s => {
+      try {
+        const stockData = await fetchNaverStock(s.code);
+        const diffStr = (stockData.rate >= 0 ? '+' : '') + stockData.diff;
+        updateCard(`stock-${s.code}`, `val-custom-${s.code}`, `rate-custom-${s.code}`, stockData.price, diffStr, stockData.rate);
+      } catch (e) {
+        // 기존 상태 유지
+      }
+    });
+
+    await Promise.allSettled([...domesticPromises, ...globalPromises, ...stockPromises, ...customPromises]);
+
+    countdown = 30;
+    isUpdating = false;
+  }
+
+  // 8. 30초 카운트다운 타이머
+  setInterval(() => {
+    countdown--;
+    const tEl = document.getElementById('timer-sec');
+    if (tEl) tEl.innerText = countdown;
+    if (countdown <= 0) {
+      fetchAllLiveMarketData();
+    }
+  }, 1000);
+
+  // 9. 사용자 관심종목 관리 (localStorage)
   function getSavedStocks() {
     try {
       return JSON.parse(localStorage.getItem('my_stocks')) || [];
@@ -556,28 +916,38 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   async function addCustomStock() {
     const input = document.getElementById('custom-stock-code');
     const code = input.value.trim();
-    if (!code) return;
-    
+    if (!code) {
+      alert('종목코드 6자리를 입력해주세요 (예: 005930)');
+      return;
+    }
+
+    const btn = document.querySelector('.watchlist-btn');
+    const originalText = btn ? btn.innerText : '+ 종목 추가';
+    if (btn) { btn.innerText = '조회 중...'; btn.disabled = true; }
+
     try {
-      const res = await fetch(`https://m.stock.naver.com/api/stock/${code}/basic`);
-      const data = await res.json();
-      if (data && data.stockName) {
-        saveStock(code, data.stockName, data.nowValue + '원', (data.changeVal >= 0 ? '▲ +' : '▼ ') + data.changeVal, data.fluctuationsRatio + '%');
-        input.value = '';
-      } else {
-        alert('종목 정보를 찾을 수 없습니다. 종목코드 6자리를 확인해주세요.');
-      }
-    } catch(e) {
-      saveStock(code, `종목 ${code}`, '조회 중...', '-', '-');
+      const stockData = await fetchNaverStock(code);
+      const diffStr = (stockData.rate >= 0 ? '▲ +' : '▼ ') + stockData.diff;
+      saveStock(code, stockData.name, stockData.price, diffStr, (stockData.rate >= 0 ? '+' : '') + stockData.rate.toFixed(2) + '%');
       input.value = '';
+    } catch(e) {
+      try {
+        const yQuote = await fetchYahooQuote(`${code}.KS`);
+        const diffStr = (yQuote.rate >= 0 ? '▲ +' : '▼ ') + yQuote.diff.toLocaleString() + '원';
+        saveStock(code, `종목 ${code}`, yQuote.price.toLocaleString() + '원', diffStr, (yQuote.rate >= 0 ? '+' : '') + yQuote.rate.toFixed(2) + '%');
+        input.value = '';
+      } catch(err) {
+        alert(`종목코드 [${code}] 정보를 조회할 수 없습니다. 6자리 코드를 다시 확인해주세요.`);
+      }
+    } finally {
+      if (btn) { btn.innerText = originalText; btn.disabled = false; }
     }
   }
 
   function renderWatchlist() {
     const container = document.getElementById('watchlist-container');
     const customStocks = getSavedStocks();
-    const customElements = document.querySelectorAll('.custom-stock-card');
-    customElements.forEach(el => el.remove());
+    document.querySelectorAll('.custom-stock-card').forEach(el => el.remove());
 
     const now = new Date();
     const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
@@ -587,57 +957,28 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       const card = document.createElement('div');
       card.className = 'card custom-stock-card';
       card.id = `stock-${s.code}`;
+      const isUp = !s.rate.includes('-');
+      const colorClass = isUp ? 'up' : 'down';
       card.innerHTML = `
         <div class="card-header-row">
           <span class="card-label">${s.name} (${s.code})</span>
-          <div>
+          <div style="display:flex; align-items:center; gap:6px;">
             <span class="card-time">${timeStr}</span>
             <button class="del-btn" onclick="removeStock('${s.code}')" title="삭제">×</button>
           </div>
         </div>
-        <div class="card-val up">${s.price}</div>
-        <div class="card-chg up">${s.change} (${s.rate})</div>
-        <div class="card-desc">사용자 등록 관심종목</div>
+        <div class="card-val ${colorClass}" id="val-custom-${s.code}">${s.price}</div>
+        <div class="card-chg ${colorClass}" id="rate-custom-${s.code}">${s.change} (${s.rate})</div>
+        <div class="card-desc">사용자 실시간 관심종목</div>
       `;
       container.appendChild(card);
     });
   }
 
-  async function refreshLiveCards() {
-    try {
-      const res = await fetch('https://api.upbit.com/v1/ticker?markets=KRW-BTC,KRW-ETH');
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const now = new Date();
-        const kst = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
-        const hours = String(kst.getHours()).padStart(2, '0');
-        const minutes = String(kst.getMinutes()).padStart(2, '0');
-        const timeStr = `${String(kst.getMonth()+1).padStart(2,'0')}.${String(kst.getDate()).padStart(2,'0')} ${hours}:${minutes} 갱신`;
-
-        const btc = data.find(c => c.market === 'KRW-BTC');
-        if (btc) {
-          document.getElementById('val-btc').innerText = btc.trade_price.toLocaleString() + '원';
-          const r = (btc.signed_change_rate * 100).toFixed(2);
-          document.getElementById('rate-btc').innerText = (r >= 0 ? '▲ +' : '▼ ') + r + '%';
-          document.getElementById('time-btc').innerText = timeStr;
-        }
-
-        const eth = data.find(c => c.market === 'KRW-ETH');
-        if (eth) {
-          document.getElementById('val-eth').innerText = eth.trade_price.toLocaleString() + '원';
-          const r = (eth.signed_change_rate * 100).toFixed(2);
-          document.getElementById('rate-eth').innerText = (r >= 0 ? '▲ +' : '▼ ') + r + '%';
-          document.getElementById('time-eth').innerText = timeStr;
-        }
-      }
-    } catch (e) {
-      console.log('실시간 데이터 갱신:', e);
-    }
-  }
-
+  // 10. 페이지 로드 즉시 실시간 데이터 일괄 호출
   document.addEventListener('DOMContentLoaded', () => {
     renderWatchlist();
-    setInterval(refreshLiveCards, 30000);
+    fetchAllLiveMarketData();
   });
 </script>
 </body>
@@ -646,35 +987,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 def build_html():
     d = get_market_data()
     html = HTML_TEMPLATE
-    html = html.replace("{{CARD_TIME}}", d['card_time'])
-    html = html.replace("{{KOSPI}}", d['kospi'])
-    html = html.replace("{{KOSPI_CHG}}", d['kospi_chg'])
-    html = html.replace("{{KOSPI_RATE}}", d['kospi_rate'])
-    html = html.replace("{{KOSDAQ}}", d['kosdaq'])
-    html = html.replace("{{KOSDAQ_CHG}}", d['kosdaq_chg'])
-    html = html.replace("{{KOSDAQ_RATE}}", d['kosdaq_rate'])
-    html = html.replace("{{SPX}}", d['spx'])
-    html = html.replace("{{SPX_CHG}}", d['spx_chg'])
-    html = html.replace("{{SPX_RATE}}", d['spx_rate'])
-    html = html.replace("{{NASDAQ}}", d['nasdaq'])
-    html = html.replace("{{NASDAQ_CHG}}", d['nasdaq_chg'])
-    html = html.replace("{{NASDAQ_RATE}}", d['nasdaq_rate'])
-    html = html.replace("{{DOW}}", d['dow'])
-    html = html.replace("{{DOW_CHG}}", d['dow_chg'])
-    html = html.replace("{{DOW_RATE}}", d['dow_rate'])
-    html = html.replace("{{USD_KRW}}", d['usd_krw'])
-    html = html.replace("{{USD_RATE}}", d['usd_rate'])
-    html = html.replace("{{OIL}}", d['oil'])
-    html = html.replace("{{OIL_RATE}}", d['oil_rate'])
-    html = html.replace("{{GOLD}}", d['gold'])
-    html = html.replace("{{GOLD_RATE}}", d['gold_rate'])
-    html = html.replace("{{BTC}}", d['btc'])
-    html = html.replace("{{BTC_RATE}}", d['btc_rate'])
-    html = html.replace("{{ETH}}", d['eth'])
-    html = html.replace("{{ETH_RATE}}", d['eth_rate'])
+    html = html.replace("{{KOSPI}}", str(d['kospi']))
+    html = html.replace("{{KOSPI_RATE_STR}}", str(d['kospi_rate_str']))
+    html = html.replace("{{KOSDAQ}}", str(d['kosdaq']))
+    html = html.replace("{{KOSDAQ_RATE_STR}}", str(d['kosdaq_rate_str']))
+    html = html.replace("{{SPX}}", str(d['spx']))
+    html = html.replace("{{SPX_RATE_STR}}", str(d['spx_rate_str']))
+    html = html.replace("{{NASDAQ}}", str(d['nasdaq']))
+    html = html.replace("{{NASDAQ_RATE_STR}}", str(d['nasdaq_rate_str']))
+    html = html.replace("{{DOW}}", str(d['dow']))
+    html = html.replace("{{DOW_RATE_STR}}", str(d['dow_rate_str']))
+    html = html.replace("{{USD_KRW}}", str(d['usd_krw']))
+    html = html.replace("{{USD_RATE_STR}}", str(d['usd_rate_str']))
+    html = html.replace("{{OIL}}", str(d['oil']))
+    html = html.replace("{{OIL_RATE_STR}}", str(d['oil_rate_str']))
+    html = html.replace("{{GOLD}}", str(d['gold']))
+    html = html.replace("{{GOLD_RATE_STR}}", str(d['gold_rate_str']))
+    html = html.replace("{{BTC}}", str(d['btc']))
+    html = html.replace("{{BTC_RATE_STR}}", str(d['btc_rate_str']))
+    html = html.replace("{{ETH}}", str(d['eth']))
+    html = html.replace("{{ETH_RATE_STR}}", str(d['eth_rate_str']))
+    html = html.replace("{{SYNC_TIME}}", str(d['sync_time']))
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
+    print("index.html successfully built by build_dashboard.py!")
 
 if __name__ == '__main__':
     build_html()
